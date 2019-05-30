@@ -1,0 +1,20 @@
+{
+  "name": "ddns",
+  "version": "1.0.0",
+  "description": "Dynamic DNS for Gandi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "build": "./docker.sh"
+  },
+  "author": "rasmus@steen.ninja",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Kofoten/ddns.git"
+  }
+}
