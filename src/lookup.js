@@ -3,6 +3,8 @@
 const EventEmitter = require('events')
 const axios = require('axios')
 
+const expectedErrors = ['EAI_AGAIN', 'ECONNRESET', 'ETIMEDOUT', 'ENETUNREACH']
+
 class Lookup extends EventEmitter {
   constructor(interval) {
     super()
@@ -24,7 +26,9 @@ class Lookup extends EventEmitter {
         }
       })
       .catch(err => {
-        this.emit('error', err)
+        if (!err.code || !expectedErrors.some(exp => exp === err.code)) {
+          this.emit('error', err)
+        }
       })
   }
 

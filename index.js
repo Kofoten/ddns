@@ -2,23 +2,12 @@
 
 const Lookup = require('./src/lookup')
 const gandi = require('./src/gandi')
+const errorhandler = require('./src/errorhandler')
 
 const apiKey = process.env.API_KEY || ''
 const ttl = process.env.TTL || 1800
 const names = process.env.NAMES ? process.env.NAMES.split(' ') : []
 const types = process.env.TYPES ? process.env.TYPES.split(' ') : []
-
-const handleError = error => {
-  if (error.response) {
-    console.log(
-      `${error.response.data.code}: ${error.response.data.cause}: ${
-        error.response.data.message
-      }`
-    )
-  } else {
-    throw error
-  }
-}
 
 const setRecords = record => {
   gandi
@@ -36,33 +25,33 @@ const setRecords = record => {
             gandi
               .updateRecordForDomaoin(domain, record, apiKey)
               .then(message => {
-                console.log(`${domain}: ${message}`)
+                const time = new Date()
+                console.log(`${time.toISOString()}: INFO: ${domain}: ${message}`)
               })
-              .catch(handleError)
+              .catch(errorhandler)
           })
           .catch(err => {
             if (err.response && err.response.status === 404) {
               gandi
                 .addRecordForDomain(domain, record, apiKey)
                 .then(message => {
-                  console.log(`${domain}: ${message}`)
+                  const time = new Date()
+                  console.log(`${time.toISOString()}: INFO: ${domain}: ${message}`)
                 })
-                .catch(handleError)
+                .catch(errorhandler)
             } else {
               throw err
             }
           })
-          .catch(handleError)
+          .catch(errorhandler)
       })
     })
-    .catch(handleError)
+    .catch(errorhandler)
 }
 
 const lookup = new Lookup(1000)
 
-lookup.on('error', err => {
-  console.error(err)
-})
+lookup.on('error', errorhandler)
 
 lookup.on('ip', ip => {
   names.forEach(name => {
